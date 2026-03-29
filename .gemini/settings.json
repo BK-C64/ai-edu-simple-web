@@ -1,0 +1,11 @@
+{
+  "experimental": {
+    "enableAgents": true
+  },
+ "general": {
+    "defaultApprovalMode": "auto_edit"
+  },
+  "security": {
+    "enablePermanentToolApproval": true
+  }
+}
