@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Prototype</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <i class="fab fa-tiktok"></i>
+            <span>TikTok</span>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Szukaj kont i filmów">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        <div class="nav-actions">
+            <button class="upload-btn"><i class="fas fa-plus"></i> Prześlij</button>
+            <button class="login-btn">Zaloguj się</button>
+            <div class="more-options"><i class="fas fa-ellipsis-vertical"></i></div>
+        </div>
+    </header>
+
+    <main class="container">
+        <aside class="sidebar">
+            <nav class="side-nav">
+                <ul>
+                    <li class="active"><i class="fas fa-home"></i> Dla Ciebie</li>
+                    <li><i class="fas fa-users"></i> Obserwowani</li>
+                    <li><i class="fas fa-compass"></i> Explore</li>
+                    <li><i class="fas fa-video"></i> LIVE</li>
+                </ul>
+            </nav>
+            <div class="suggested-accounts">
+                <p class="section-title">Polecane konta</p>
+                <div class="account-item">
+                    <img src="https://i.pravatar.cc/150?u=user1" alt="Avatar">
+                    <div class="account-info">
+                        <span class="username">edu_creator</span>
+                        <span class="name">Edu Creator</span>
+                    </div>
+                </div>
+                <div class="account-item">
+                    <img src="https://i.pravatar.cc/150?u=user2" alt="Avatar">
+                    <div class="account-info">
+                        <span class="username">frontend_master</span>
+                        <span class="name">Frontend Master</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <p>© 2024 TikTok Prototyp</p>
+            </div>
+        </aside>
+
+        <section class="feed" id="video-feed">
+            <!-- Filmiki będą renderowane przez JS -->
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
