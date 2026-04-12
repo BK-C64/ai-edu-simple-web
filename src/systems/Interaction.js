@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 
 export class Interaction {
-    constructor(camera, scene, world) {
+    constructor(camera, scene, world, ui) {
         this.camera = camera;
         this.scene = scene;
         this.world = world;
+        this.ui = ui;
         
         this.raycaster = new THREE.Raycaster();
         this.raycaster.far = 5; // Zasięg 5 jednostek
@@ -22,32 +23,6 @@ export class Interaction {
         this.scene.add(this.highlightBox);
 
         this.intersect = null;
-        this.selectedType = 'grass';
-        
-        this.setupKeyboard();
-    }
-
-    setupKeyboard() {
-        const hud = document.createElement('div');
-        hud.id = 'hud-block';
-        hud.style.position = 'absolute';
-        hud.style.bottom = '20px';
-        hud.style.left = '50%';
-        hud.style.transform = 'translateX(-50%)';
-        hud.style.color = 'white';
-        hud.style.backgroundColor = 'rgba(0,0,0,0.5)';
-        hud.style.padding = '10px';
-        hud.style.fontFamily = 'monospace';
-        hud.innerText = `Wybrany blok: ${this.selectedType}`;
-        document.body.appendChild(hud);
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === '1') this.selectedType = 'grass';
-            if (e.key === '2') this.selectedType = 'dirt';
-            if (e.key === '3') this.selectedType = 'stone';
-            if (e.key === '4') this.selectedType = 'wood';
-            hud.innerText = `Wybrany blok: ${this.selectedType}`;
-        });
     }
 
     update() {
@@ -106,8 +81,9 @@ export class Interaction {
                 newY >= Math.floor(playerFeetY) && 
                 newY <= Math.ceil(playerPos.y);
 
-            if (!isColliding) {
-                this.world.addBlock(newX, newY, newZ, this.selectedType);
+            const selectedType = this.ui.getSelectedBlockType();
+            if (!isColliding && selectedType) {
+                this.world.addBlock(newX, newY, newZ, selectedType);
             }
         }
     }

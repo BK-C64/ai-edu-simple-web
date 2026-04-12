@@ -13,6 +13,7 @@ export class Player {
         this.moveSpeed = 10.0;
         this.prevTime = performance.now();
         this.canJump = false;
+        this.isFrozen = false;
 
         // Klawisze sterowania
         this.moveForward = false;
@@ -32,10 +33,8 @@ export class Player {
 
     initEventListeners() {
         const onKeyDown = (event) => {
-            if (document.pointerLockElement !== document.body && event.code === 'Space') {
-                // Zapobiegaj przewijaniu strony spacją gdy pointer lock nie jest aktywny
-                // (Chociaż w naszym przypadku container to body lub div, warto uważać)
-            }
+            if (this.isFrozen) return;
+            
             switch (event.code) {
                 case 'KeyW': this.moveForward = true; break;
                 case 'KeyA': this.moveLeft = true; break;
@@ -61,11 +60,26 @@ export class Player {
 
         document.addEventListener('keydown', onKeyDown);
         document.addEventListener('keyup', onKeyUp);
+
+        window.addEventListener('inventoryToggled', (e) => {
+            this.isFrozen = e.detail.isOpen;
+            if (this.isFrozen) {
+                this.moveForward = false;
+                this.moveBackward = false;
+                this.moveLeft = false;
+                this.moveRight = false;
+            }
+        });
     }
 
     update() {
         const time = performance.now();
         const delta = (time - this.prevTime) / 1000;
+
+        if (this.isFrozen) {
+            this.prevTime = time;
+            return;
+        }
 
         // Reset velocity if not moved (friction/damping)
         this.velocity.x -= this.velocity.x * 10.0 * delta;

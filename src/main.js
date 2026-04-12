@@ -1,23 +1,20 @@
 import { Game } from './core/Game.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+function init() {
     const container = document.getElementById('game-container');
-    const instructions = document.getElementById('instructions');
+    const overlay = document.getElementById('overlay');
     
+    if (!container || !overlay) {
+        console.error("Nie znaleziono wymaganych elementów DOM (game-container lub overlay).");
+        return;
+    }
+
     // Inicjalizacja gry
     const game = new Game(container);
 
     // Obsługa rozpoczęcia gry i Pointer Lock
-    instructions.addEventListener('click', () => {
+    overlay.addEventListener('click', () => {
         game.requestPointerLock();
-    });
-
-    game.onPointerLockChange((isLocked) => {
-        if (isLocked) {
-            instructions.style.display = 'none';
-        } else {
-            instructions.style.display = 'block';
-        }
     });
 
     // Pętla gry
@@ -27,4 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
         game.render();
     }
     animate();
-});
+}
+
+// Inicjalizacja dla modułów
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Player } from '../entities/Player.js';
 import { World } from '../world/World.js';
 import { Interaction } from '../systems/Interaction.js';
+import { UI } from '../systems/UI.js';
 
 export class Game {
     constructor(container) {
@@ -19,6 +20,9 @@ export class Game {
 
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         
+        // Inicjalizacja UI (przed resztą, żeby Interaction mógł z niego korzystać)
+        this.ui = new UI();
+
         // Inicjalizacja świata
         this.world = new World(this.scene);
 
@@ -27,26 +31,53 @@ export class Game {
         this.scene.add(this.player.getObject());
 
         // Inicjalizacja interakcji
-        this.interaction = new Interaction(this.camera, this.scene, this.world);
+        this.interaction = new Interaction(this.camera, this.scene, this.world, this.ui);
 
         // Podstawowe oświetlenie
         this.setupLights();
 
-        // Dodaj proste UI informacyjne
-        this.setupUI();
-
         // Obsługa zmiany rozmiaru okna
         window.addEventListener('resize', () => this.onWindowResize(), false);
 
+        // Inicjalizacja słuchacza Pointer Lock
+        this.setupPointerLockListener();
+        this.setupInventoryUIListener();
+
         // Obsługa kliknięć myszy (interakcja)
         this.container.addEventListener('mousedown', (e) => {
-            if (document.pointerLockElement === this.container) {
+            if (document.pointerLockElement === this.container && !this.ui.isInventoryOpen) {
                 this.interaction.onMouseDown(e);
             }
         });
 
         // Zapobieganie menu kontekstowemu na PPM
         this.container.addEventListener('contextmenu', (e) => e.preventDefault());
+    }
+
+    setupInventoryUIListener() {
+        window.addEventListener('inventoryToggled', (e) => {
+            const isOpen = e.detail.isOpen;
+            const isLocked = document.pointerLockElement === this.container;
+            
+            // Jeśli zamykamy inwentarz a mysz nie jest zablokowana, pokaż overlay
+            if (!isOpen && !isLocked) {
+                this.ui.showOverlay(true);
+            }
+        });
+    }
+
+    setupPointerLockListener() {
+        document.addEventListener('pointerlockchange', () => {
+            const isLocked = document.pointerLockElement === this.container;
+            
+            // Overlay powinien znikać gdy mamy locka LUB gdy otwarty jest inwentarz
+            // Powinien pojawiać się tylko gdy nie mamy locka I inwentarz jest zamknięty
+            if (isLocked || this.ui.isInventoryOpen) {
+                this.ui.showOverlay(false);
+            } else {
+                this.ui.showOverlay(true);
+            }
+        });
     }
 
     setupLights() {
@@ -69,36 +100,6 @@ export class Game {
         this.scene.add(sunLight);
     }
 
-    setupUI() {
-        const info = document.createElement('div');
-        info.style.position = 'absolute';
-        info.style.top = '10px';
-        info.style.left = '10px';
-        info.style.color = 'white';
-        info.style.fontFamily = 'sans-serif';
-        info.style.textShadow = '1px 1px 2px black';
-        info.style.pointerEvents = 'none';
-        info.innerHTML = `
-            <b>Minecraft Proto Stage 3</b><br>
-            WSAD: Ruch | SPACE: Skok<br>
-            LPM: Usuń | PPM: Buduj<br>
-            1-4: Wybór bloku (Trawa, Ziemia, Kamień, Drewno)
-        `;
-        this.container.appendChild(info);
-
-        const crosshair = document.createElement('div');
-        crosshair.style.position = 'absolute';
-        crosshair.style.top = '50%';
-        crosshair.style.left = '50%';
-        crosshair.style.width = '20px';
-        crosshair.style.height = '20px';
-        crosshair.style.border = '2px solid white';
-        crosshair.style.borderRadius = '50%';
-        crosshair.style.transform = 'translate(-50%, -50%)';
-        crosshair.style.pointerEvents = 'none';
-        this.container.appendChild(crosshair);
-    }
-
     onWindowResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
@@ -106,7 +107,9 @@ export class Game {
     }
 
     requestPointerLock() {
-        this.container.requestPointerLock();
+        if (!this.ui.isInventoryOpen) {
+            this.container.requestPointerLock();
+        }
     }
 
     onPointerLockChange(callback) {

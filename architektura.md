@@ -45,9 +45,22 @@ Zastosowano modularną strukturę, aby odizolować logikę gry od renderowania:
   - Dodano HUD informacyjny oraz celownik (Crosshair) w HTML/CSS.
 - **Zarządzanie Stanem**: `World.js` przechowuje teraz dane w strukturze `Map`, co pozwala na szybki dostęp do informacji o blokach bez polegania na scenie Three.js.
 
-## 3. Komunikacja między Modułami
-- `Game.js` jest centralnym punktem (Orchestrator). Inicjalizuje świat i gracza, a następnie w pętli `update()` wywołuje ich własne metody aktualizacji stanu.
-- Gracz posiada bezpośredni dostęp do swojej kamery, co pozwala na separację logiki sterowania od reszty systemów.
+### System Inwentarza i GUI (Etap 4)
+- **UI.js**: Zarządza warstwą interfejsu użytkownika (Hotbar, Inwentarz).
+  - Obsługuje wybór slotu kółkiem myszy i klawiszami 1-9.
+  - Kontroluje otwieranie/zamykanie Inwentarza (`E`), co automatycznie zwalnia kursor myszy i wstrzymuje ruch gracza.
+  - Komunikuje się z innymi systemami poprzez zdarzenia (`inventoryToggled`).
+- **TextureLoader.js**: (Etap 3) Zarządzanie zasobami graficznymi.
+
+## 3. Standardy Kodowania i Stylizacji
+- **Separacja Stylów (CSS)**: Wszystkie style interfejsu (HUD, Inwentarz, Hotbar) są przechowywane w zewnętrznym pliku `src/style.css`.
+- **Zarządzanie Stanem UI**: Logika JavaScript nie manipuluje bezpośrednio stylami inline (`element.style`). Zamiast tego wykorzystuje API `classList` (np. `classList.toggle('hidden')`) do przełączania stanów widoczności i wyglądu.
+- **Jednostki i Zmienne**: Wykorzystano zmienne CSS (`:root`) do definiowania kolorów i parametrów UI, co ułatwia późniejszą personalizację wyglądu silnika.
+
+## 4. Komunikacja między Modułami
+- `Game.js` jest centralnym punktem (Orchestrator). Inicjalizuje świat, gracza oraz UI. Koordynuje przepływ zdarzeń i stan pauzy (Inwentarz).
+- `Interaction.js` pobiera informację o aktualnie wybranym bloku z instancji `UI`.
+- `Player.js` reaguje na stan Inwentarza, blokując poruszanie się, gdy interfejs jest otwarty.
 
 ---
 *Dokument aktualizowany po każdym etapie projektu.*
