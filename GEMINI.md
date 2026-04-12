@@ -1,24 +1,25 @@
-# Projekt Edukacyjny: Zaawansowany Prototyp Serwisu Ogłoszeń
+# Projekt Edukacyjny: Voxel Engine 3D (Minecraft Prototyp)
 
-To jest projekt edukacyjny skupiony na zaawansowanym prototypowaniu w Vanilla JS. Wszystkie działania muszą być zgodne z zasadami inkrementacyjnego rozwoju i czystej architektury.
+To jest projekt edukacyjny, którego celem jest budowa zaawansowanego prototypu gry 3D typu Minecraft, działającego w 100% w przeglądarce przy użyciu technologii WebGL (Three.js).
 
 ## Metodologia Pracy
 
-W projekcie wykorzystujemy wyspecjalizowanych agentów Gemini CLI do realizacji zadań:
+W projekcie wykorzystujemy wyspecjalizowanych agentów Gemini CLI:
 
 1.  **Product Manager (`product-manager`)**:
-    *   Definiuje etapy "User Value" (co użytkownik zyskuje w danej iteracji).
-    *   Zarządza specyfikacją wymagań w `wymagania/zaawansowana_strona.md`.
-    *   Pilnuje, aby każdy etap był działającym prototypem.
+    *   Definiuje mechaniki gry, systemy (inwentarz, biomy, cykl dobowy).
+    *   Zarządza specyfikacją w `wymagania/minecraft_prototyp.md`.
+    *   Dba o to, by każdy z 6 etapów dostarczał grywalny "przyrost" (Increment).
 
 2.  **Software Developer (`software-developer-pl`)**:
-    *   Implementuje kod zgodnie z architekturą modułową (ES6 Modules).
-    *   Stosuje zasadę *Separation of Concerns* (API vs UI vs State).
-    *   Dostarcza czysty, profesjonalny kod HTML/CSS/JS.
+    *   Implementuje architekturę 3D opartą na modułach ES6.
+    *   Optymalizuje renderowanie (Face Culling, BufferGeometry, InstancedMesh).
+    *   Odpowiada za fizykę, raycasting (budowanie/niszczenie) i logikę świata.
 
 ## Zasady Techniczne
 
-*   **Brak Backend Serwera**: Cała logika biznesowa, dane i stan aplikacji znajdują się po stronie klienta (frontend).
-*   **Dane (Mocki)**: Dane są przechowywane jako obiekty/tablice JavaScript w dedykowanych modułach.
-*   **Lokalny Serwer Statyczny**: Serwer Python (`python -m http.server`) służy wyłącznie do udostępniania plików HTML/CSS/JS przeglądarce, co jest wymagane przez moduły ES6.
-*   **Cel**: Edukacja o inkrementacyjnym dostarczaniu wartości i strukturze kodu.
+*   **Silnik**: Three.js (ładowany przez CDN/ESM).
+*   **Architektura**: Modularna (Core, World, Player, UI).
+*   **Wydajność**: Każda decyzja projektowa musi uwzględniać płynność (docelowo 60 FPS).
+*   **Brak Serwera**: Gra działa lokalnie (wymaga prostego serwera HTTP do obsługi modułów JS).
+*   **Cel**: Edukacja w zakresie matematyki 3D, grafiki komputerowej i optymalizacji kodu.

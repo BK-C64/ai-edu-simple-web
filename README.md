@@ -1,26 +1,28 @@
-# Projekt Edukacyjny: Zaawansowany Prototyp Serwisu Ogłoszeń
+# Projekt Edukacyjny: Zaawansowany Prototyp 3D Voxel Engine (Minecraft)
 
-Ten projekt ma na celu nauczenie uczniów 5. klasy technikum elektronicznego zasad **inkrementacyjnego tworzenia oprogramowania** (Agile) oraz **dobrej architektury frontendowej**.
+Ten projekt ma na celu naukę grafiki 3D, matematyki w grach (wektory, macierze) oraz **zaawansowanej optymalizacji frontendowej** przy użyciu biblioteki **Three.js**.
 
 ## Cel Projektu
-Budowa zaawansowanego prototypu serwisu ogłoszeń motoryzacyjnych (wyszukiwarka samochodów) przy użyciu czystego HTML, CSS i JavaScript (ES6 Modules).
+Budowa zaawansowanego prototypu silnika voxelowego (Minecraft Clone) działającego w przeglądarce, z obsługą budowania, niszczenia, proceduralnego terenu i cyklu dobowego.
 
 ## Główne Cele Edukacyjne
-- **Dziel i Rządź (Iteracyjność)**: Dostarczanie wartości użytkowej (User Value) w każdym etapie prac.
-- **Architektura Oprogramowania**: Modułowość, Separation of Concerns, Single Source of Truth (Zarządzanie stanem).
-- **Prototypowanie z Mockami**: Praca bez backendu, wykorzystując dane testowe w JS.
+- **Grafika 3D i WebGL**: Zrozumienie renderowania w przestrzeni trójwymiarowej.
+- **Wydajność (Optimization)**: Zarządzanie tysiącami obiektów (Chunks, Face Culling).
+- **Proceduralna Generacja**: Wykorzystanie szumu (Perlin Noise) do tworzenia terenu.
+- **Mechanika Gry**: Implementacja fizyki (grawitacja, kolizje) i interakcji (Raycasting).
 
-## Struktura Pracy (Etapy Agile)
-1. **MVP**: Lista ofert (Strona główna).
-2. **Wyszukiwanie i Detale**: Znajdowanie konkretnego pojazdu.
-3. **Zaawansowane Filtrowanie**: Zawężanie wyników po parametrach.
-4. **Dodawanie Ogłoszeń**: Formularz zapisu do lokalnego stanu.
+## Struktura Pracy (6 Etapów Agile)
+1. **MVP - Silnik i Świat**: Scena 3D, sterowanie FPP i pierwsze pole trawy.
+2. **Budowanie i Niszczenie**: Interakcja ze światem (Raycasting, blokada kursora).
+3. **Oprawa i System Bloków**: Tekstury, oświetlenie i zapis stanu gry.
+4. **GUI i Inwentarz**: HUD (Hotbar), wybór bloków i pasek zdrowia/wyboru.
+5. **Dynamiczne Środowisko**: Cykl dnia i nocy, mgła i animacja chmur.
+6. **Nieskończony Świat**: System Chunków i proceduralna generacja terenu.
 
-## Uruchamianie (Tylko Frontend)
-Projekt jest aplikacją typu **Pure Frontend** i nie posiada serwera backendowego. Ze względu na wykorzystanie modułów JavaScript (ES6), wymaga jednak lokalnego serwera HTTP do poprawnego serwowania plików statycznych przez przeglądarkę:
+## Uruchamianie
+Projekt wykorzystuje natywne moduły JavaScript (ES6 Modules) oraz bibliotekę Three.js ładowaną przez CDN. Wymaga lokalnego serwera HTTP:
 
 ```bash
-python -m http.server
+python -m http.server 8000
 ```
-Następnie otwórz `http://localhost:8000` w przeglądarce. Cała logika (dane, filtrowanie, stan) działa wyłącznie po stronie klienta.
-
+Następnie otwórz `http://localhost:8000` w przeglądarce. Cała logika renderowania i fizyki odbywa się po stronie klienta (GPU/CPU).
