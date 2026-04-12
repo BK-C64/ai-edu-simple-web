@@ -57,6 +57,77 @@ export const renderCarList = (cars, container) => {
 };
 
 /**
+ * Funkcja formatująca przebieg (km).
+ * @param {number} mileage 
+ * @returns {string}
+ */
+const formatMileage = (mileage) => {
+  return new Intl.NumberFormat('pl-PL').format(mileage) + ' km';
+};
+
+/**
+ * Renderuje szczegóły samochodu w modalu.
+ * @param {Object} car 
+ */
+export const renderModal = (car) => {
+  const modal = document.getElementById('car-modal');
+  const modalBody = document.getElementById('modal-body');
+  
+  if (!modal || !modalBody) return;
+
+  modalBody.innerHTML = `
+    <div class="modal-body-content">
+      <div class="modal-image-side">
+        <img src="${car.obrazek}" alt="${car.marka} ${car.model}">
+      </div>
+      <div class="modal-info-side">
+        <h2 class="brand">${car.marka}</h2>
+        <h3 class="model">${car.model}</h3>
+        <p class="modal-price">${formatPrice(car.cena)}</p>
+        
+        <div class="modal-specs">
+          <div class="spec-item">
+            <span class="spec-label">Rok produkcji</span>
+            <span class="spec-value">${car.rok}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Paliwo</span>
+            <span class="spec-value">${car.paliwo}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Przebieg</span>
+            <span class="spec-value">${formatMileage(car.przebieg)}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Stan</span>
+            <span class="spec-value">${car.stan}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+  // Dodajemy klasę active po krótkim opóźnieniu dla animacji
+  setTimeout(() => modal.classList.add('active'), 10);
+  document.body.style.overflow = 'hidden'; // Blokada scrolla
+};
+
+/**
+ * Zamyka modal.
+ */
+export const closeModal = () => {
+  const modal = document.getElementById('car-modal');
+  if (!modal) return;
+
+  modal.classList.remove('active');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+    document.body.style.overflow = ''; // Przywrócenie scrolla
+  }, 300);
+};
+
+/**
  * Renderuje komunikat o ładowaniu.
  * @param {HTMLElement} container 
  */

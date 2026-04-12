@@ -6,6 +6,8 @@ export const cars = [
     cena: 450000,
     rok: 2022,
     paliwo: "Benzyna",
+    przebieg: 12500,
+    stan: "Używany",
     obrazek: "https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=800&auto=format&fit=crop"
   },
   {
@@ -15,6 +17,8 @@ export const cars = [
     cena: 580000,
     rok: 2023,
     paliwo: "Benzyna",
+    przebieg: 5200,
+    stan: "Demonstracyjny",
     obrazek: "https://images.unsplash.com/photo-1606152421802-db97b9c7a11b?q=80&w=800&auto=format&fit=crop"
   },
   {
@@ -24,6 +28,8 @@ export const cars = [
     cena: 490000,
     rok: 2021,
     paliwo: "Elektryczny",
+    przebieg: 21000,
+    stan: "Używany",
     obrazek: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=800&auto=format&fit=crop"
   },
   {
@@ -33,6 +39,8 @@ export const cars = [
     cena: 620000,
     rok: 2020,
     paliwo: "Benzyna",
+    przebieg: 35000,
+    stan: "Używany",
     obrazek: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop"
   },
   {
@@ -42,6 +50,8 @@ export const cars = [
     cena: 750000,
     rok: 2024,
     paliwo: "Diesel",
+    przebieg: 10,
+    stan: "Nowy",
     obrazek: "https://images.unsplash.com/photo-1520031441872-265e4ff70366?q=80&w=800&auto=format&fit=crop"
   },
   {
@@ -51,6 +61,8 @@ export const cars = [
     cena: 220000,
     rok: 2019,
     paliwo: "Benzyna",
+    przebieg: 48000,
+    stan: "Używany",
     obrazek: "https://images.unsplash.com/photo-1584345604482-8135822b926a?q=80&w=800&auto=format&fit=crop"
   }
 ];

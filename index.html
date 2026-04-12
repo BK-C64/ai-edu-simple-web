@@ -7,12 +7,17 @@
     <!-- CSS -->
     <link rel="stylesheet" href="src/css/base.css">
     <link rel="stylesheet" href="src/css/card.css">
+    <link rel="stylesheet" href="src/css/search.css">
+    <link rel="stylesheet" href="src/css/modal.css">
 </head>
 <body>
     <header class="main-header">
         <div class="container header-inner">
             <div class="logo">
                 <a href="#"><h1>AutoGram</h1></a>
+            </div>
+            <div class="search-bar-container">
+                <input type="text" id="search-input" placeholder="Szukaj auta (marka, model)..." class="search-input">
             </div>
             <nav class="main-nav">
                 <!-- Tu w przyszłości ikony nawigacji -->
@@ -29,6 +34,16 @@
             </div>
         </div>
     </main>
+
+    <!-- Modal Szczegółów -->
+    <div id="car-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <div id="modal-body">
+                <!-- Treść modala ładowana dynamicznie -->
+            </div>
+        </div>
+    </div>
 
     <!-- App Entry Point -->
     <script type="module" src="src/js/app.js"></script>

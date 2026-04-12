@@ -57,29 +57,76 @@ Projekt został zaprojektowany w oparciu o nowoczesne wzorce architektury fronte
     - Układ strony jest przejrzysty i dostosowany do rozdzielczości HD.
 
 ### Etap 2: Wyszukiwanie i Szczegóły Ogłoszenia
-**Cel dla użytkownika:** Możliwość znalezienia konkretnego modelu i zapoznania się z jego pełną specyfikacją.
-- **Zakres funkcjonalny**:
-    - Wyszukiwarka tekstowa na stronie głównej (filtrowanie po nazwie).
-    - Widok szczegółów pojazdu aktywowany po kliknięciu w kartę (szczegółowe parametry: rok, przebieg, paliwo).
-    - Możliwość powrotu z widoku szczegółów do listy głównej.
-- **Wskazówki architektoniczne**:
-    - Implementacja prostego "routera" opartego na przełączaniu widoczności sekcji (SPA - Single Page Application).
-    - Dodanie obsługi zdarzeń (Event Listeners) dla wyszukiwarki i interakcji z kartami.
-- **Kryteria akceptacji**:
-    - Wpisanie marki w wyszukiwarkę natychmiast zawęża listę widocznych kart.
-    - Kliknięcie w ogłoszenie poprawnie wyświetla dedykowany widok z danymi technicznymi tego konkretnego auta.
+**Cel dla użytkownika:** Możliwość szybkiego odnalezienia konkretnego modelu oraz zapoznania się z jego pełną specyfikacją bez opuszczania kontekstu listy.
+
+**Historyjki Użytkownika:**
+- Jako użytkownik, chcę wpisać nazwę auta w wyszukiwarkę, aby natychmiast zobaczyć pasujące oferty.
+- Jako użytkownik, chcę kliknąć w kartę auta, aby zobaczyć jego szczegółowe parametry w czytelnym oknie.
+
+**Kryteria Akceptacji (AC):**
+1. **Wyszukiwarka (Real-time Search):**
+    - Na górze strony znajduje się pole wyszukiwania (Search Bar) o minimalistycznym wyglądzie (inspirowany Instagramem).
+    - Filtrowanie odbywa się w czasie rzeczywistym podczas wpisywania tekstu (zdarzenie `input`).
+    - System przeszukuje zarówno pola **marka**, jak i **model** (wielkość liter nie ma znaczenia).
+    - W przypadku braku wyników, zamiast pustej strony wyświetlany jest komunikat "Brak ofert spełniających kryteria".
+    - Stan wyszukiwania (wpisana fraza) jest synchronizowany z `state.js`.
+
+2. **Widok Szczegółów (Modal/Overlay):**
+    - Kliknięcie w dowolny element karty samochodu otwiera widok szczegółowy.
+    - Widok szczegółów jest realizowany jako modal (nakładka) przykrywająca listę, co pozwala zachować kontekst przeglądania.
+    - Informacje w szczegółach obejmują: duże zdjęcie, markę i model, cenę oraz parametry techniczne (rok produkcji, przebieg, rodzaj paliwa).
+    - Modal zawiera wyraźny przycisk zamknięcia (ikona "X") oraz umożliwia zamknięcie poprzez kliknięcie w tło (overlay).
+    - Po zamknięciu modala użytkownik wraca do przefiltrowanej wcześniej listy.
+
+3. **Techniczne i UX:**
+    - Obsługa zdarzeń (`click`, `input`) musi być zaimplementowana w modułach i skoordynowana przez `app.js`.
+    - Zmiana widoku (pokazanie/ukrycie modala) odbywa się poprzez manipulację klasami CSS lub DOM, bez przeładowania strony (SPA style).
+    - Interfejs jest zoptymalizowany pod rozdzielczość 1920x1080 (HD) na systemie Windows (czytelne fonty, odpowiednie proporcje).
+
+**Wskazówki architektoniczne**:
+- Rozbudowa `state.js` o pola: `searchQuery` oraz `selectedCarId`.
+- Funkcja renderująca listę powinna filtrować dane z `state.js` w oparciu o `searchQuery`.
+- Style modala powinny zostać wydzielone do osobnego pliku CSS (np. `modal.css`).
+- Wykorzystanie `dataset` w HTML do przechowywania ID samochodu na karcie, co ułatwi identyfikację klikniętego elementu.
 
 ### Etap 3: Zaawansowane Filtrowanie
-**Cel dla użytkownika:** Precyzyjne zawężenie wyników wyszukiwania do aut spełniających konkretne kryteria budżetowe i techniczne.
-- **Zakres funkcjonalny**:
-    - Panel boczny z filtrami: Zakres ceny (od-do), Rok produkcji, Rodzaj paliwa (dropdown).
-    - Dynamiczny licznik "Znaleziono X ofert" aktualizowany w czasie rzeczywistym.
-- **Wskazówki architektoniczne**:
-    - Wprowadzenie centralnego obiektu stanu (`state`), przechowującego aktualne filtry.
-    - Stworzenie modułu `logic.js` z czystymi funkcjami (pure functions) do filtrowania tablicy danych na podstawie stanu.
-- **Kryteria akceptacji**:
-    - Wybranie filtra (np. "Benzyna") powoduje natychmiastowe ukrycie aut z innym rodzajem paliwa.
-    - Filtry działają kumulatywnie (np. Cena + Paliwo).
+**Cel dla użytkownika:** Możliwość precyzyjnego zawężenia listy ofert do pojazdów spełniających konkretne wymagania techniczne i budżetowe, bez konieczności przeglądania wszystkich ogłoszeń.
+
+**Historyjki Użytkownika:**
+- Jako użytkownik, chcę określić minimalną i maksymalną cenę, aby widzieć tylko auta w moim budżecie.
+- Jako użytkownik, chcę przefiltrować auta po roku produkcji, aby znaleźć nowsze egzemplarze.
+- Jako użytkownik, chcę wybrać rodzaj paliwa (np. Hybryda), aby zobaczyć tylko interesujące mnie napędy.
+- Jako użytkownik, chcę, aby filtry działały razem z wyszukiwarką tekstową, dając mi bardzo precyzyjne wyniki.
+
+**Kryteria Akceptacji (AC):**
+1. **Interfejs Filtrów (UI):**
+    - Sekcja filtrów znajduje się bezpośrednio pod wyszukiwarką lub jest dostępna jako rozwijany panel ("Pokaż filtry").
+    - Stylistyka jest spójna z resztą aplikacji (Clean UI, styl nowoczesny/Instagramowy).
+    - Pola wejściowe:
+        - Cena: dwa pola typu `number` ("Cena od", "Cena do").
+        - Rok produkcji: dwa pola typu `number` ("Rok od", "Rok do").
+        - Rodzaj paliwa: element `select` z opcjami (np. Wszystkie, Benzyna, Diesel, Hybryda, Elektryczny).
+    - Widoczny licznik wyników: "Znaleziono X ofert" aktualizowany dynamicznie.
+
+2. **Logika i Filtrowanie:**
+    - Filtrowanie odbywa się w czasie rzeczywistym (zdarzenie `input` lub `change`). Dynamiczna aktualizacja listy jest preferowanym wzorcem UX dla nowoczesnych prototypów.
+    - Wszystkie aktywne filtry oraz fraza z wyszukiwarki są łączone operatorem logicznym **AND** (koniunkcja).
+    - Puste pola "od" / "do" oznaczają brak ograniczenia w danym kierunku.
+    - System poprawnie obsługuje wartości brzegowe (np. cena dokładnie równa "Cena do").
+
+3. **Zarządzanie Stanem (State Management):**
+    - Wszystkie wartości filtrów (priceMin, priceMax, yearMin, yearMax, fuelType) są przechowywane w centralnym obiekcie w `state.js`.
+    - Zmiana dowolnego filtra aktualizuje stan, co automatycznie wywołuje ponowne renderowanie listy ofert.
+
+4. **Techniczne i UX (Windows HD):**
+    - Układ filtrów zoptymalizowany pod rozdzielczość 1920x1080 (HD) na systemie Windows.
+    - Elementy formularza mają wyraźne etykiety (labels) i placeholdery.
+    - Dodany przycisk "Wyczyść filtry", który resetuje stan filtrów i przywraca pełną listę.
+
+**Wskazówki architektoniczne**:
+- Rozbudowa `state.js` o pod-obiekt `filters`.
+- Stworzenie funkcji pomocniczej, która iteruje po wszystkich autach i sprawdza, czy spełniają one komplet warunków (search query + wszystkie filtry).
+- Wydzielenie stylów filtrów do `src/css/search.css`.
 
 ### Etap 4: Dodawanie Ogłoszenia (Local State)
 **Cel dla użytkownika:** Możliwość wystawienia własnego auta na sprzedaż i natychmiastowe zobaczenie go w serwisie.
