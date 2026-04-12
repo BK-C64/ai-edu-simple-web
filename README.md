@@ -1,23 +1,26 @@
-# Projekt Edukacyjny: Prototypy Stron Internetowych
+# Projekt Edukacyjny: Zaawansowany Prototyp Serwisu Ogłoszeń
 
-To jest projekt edukacyjny, którego celem jest tworzenie prostych prototypów stron internetowych działających całkowicie po stronie klienta (bez serwera).
+Ten projekt ma na celu nauczenie uczniów 5. klasy technikum elektronicznego zasad **inkrementacyjnego tworzenia oprogramowania** (Agile) oraz **dobrej architektury frontendowej**.
 
-## Metodologia Pracy
+## Cel Projektu
+Budowa zaawansowanego prototypu serwisu ogłoszeń motoryzacyjnych (wyszukiwarka samochodów) przy użyciu czystego HTML, CSS i JavaScript (ES6 Modules).
 
-W projekcie wykorzystujemy wyspecjalizowanych agentów Gemini CLI do realizacji zadań:
+## Główne Cele Edukacyjne
+- **Dziel i Rządź (Iteracyjność)**: Dostarczanie wartości użytkowej (User Value) w każdym etapie prac.
+- **Architektura Oprogramowania**: Modułowość, Separation of Concerns, Single Source of Truth (Zarządzanie stanem).
+- **Prototypowanie z Mockami**: Praca bez backendu, wykorzystując dane testowe w JS.
 
-1.  **Product Manager (`product-manager`)**:
-    *   Odpowiada za definiowanie "CO" i "DLACZEGO".
-    *   Tworzy i zarządza specyfikacją wymagań w pliku `wymagania.md`.
-    *   Definiuje historyjki użytkownika i kryteria akceptacji.
+## Struktura Pracy (Etapy Agile)
+1. **MVP**: Lista ofert (Strona główna).
+2. **Wyszukiwanie i Detale**: Znajdowanie konkretnego pojazdu.
+3. **Zaawansowane Filtrowanie**: Zawężanie wyników po parametrach.
+4. **Dodawanie Ogłoszeń**: Formularz zapisu do lokalnego stanu.
 
-2.  **Software Developer (`software-developer-pl`)**:
-    *   Odpowiada za "JAK" – implementację czystego i czytelnego kodu HTML/CSS/JS.
-    *   Dostarcza prototypy w stylu Instagrama, dbając o wysoką jakość UX/UI.
-    *   Zapewnia modularność kodu, umożliwiającą łatwe zmiany w prototypie.
+## Uruchamianie (Tylko Frontend)
+Projekt jest aplikacją typu **Pure Frontend** i nie posiada serwera backendowego. Ze względu na wykorzystanie modułów JavaScript (ES6), wymaga jednak lokalnego serwera HTTP do poprawnego serwowania plików statycznych przez przeglądarkę:
 
-## Zasady Techniczne
+```bash
+python -m http.server
+```
+Następnie otwórz `http://localhost:8000` w przeglądarce. Cała logika (dane, filtrowanie, stan) działa wyłącznie po stronie klienta.
 
-*   **Bez Serwera**: Aplikacje muszą działać po otwarciu pliku HTML bezpośrednio w przeglądarce.
-*   **Czysty Kod**: Separacja HTML, CSS i JS w osobnych plikach.
-*   **Cel**: Edukacja i szybkie prototypowanie, a nie gotowe produkty produkcyjne.
