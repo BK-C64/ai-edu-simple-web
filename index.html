@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Prototyp 3D - Etap 2</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #87CEEB; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #game-container { width: 100vw; height: 100vh; }
+        #instructions {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+            border: 2px solid white;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.8;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    <div id="crosshair"></div>
+    <div id="instructions">
+        <h1>Minecraft Prototyp 3D</h1>
+        <p>Kliknij, aby rozpocząć</p>
+        <p>(W, S, A, D - poruszanie | Space - skok)</p>
+        <p>(LPM - niszczenie | PPM - budowanie)</p>
+    </div>
+
+    <!-- Import Map for ES6 Modules -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
