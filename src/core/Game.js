@@ -8,12 +8,13 @@ export class Game {
         this.container = container;
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x87CEEB); // Sky blue
-        this.scene.fog = new THREE.Fog(0x87CEEB, 10, 100);
+        this.scene.fog = new THREE.FogExp2(0x87CEEB, 0.015);
 
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.container.appendChild(this.renderer.domElement);
 
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -31,6 +32,9 @@ export class Game {
         // Podstawowe oświetlenie
         this.setupLights();
 
+        // Dodaj proste UI informacyjne
+        this.setupUI();
+
         // Obsługa zmiany rozmiaru okna
         window.addEventListener('resize', () => this.onWindowResize(), false);
 
@@ -46,22 +50,53 @@ export class Game {
     }
 
     setupLights() {
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         this.scene.add(ambientLight);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(50, 100, 50);
-        directionalLight.castShadow = true;
+        const sunLight = new THREE.DirectionalLight(0xffffeb, 1.0);
+        sunLight.position.set(50, 100, 50);
+        sunLight.castShadow = true;
         
-        // Optymalizacja cieni
-        directionalLight.shadow.mapSize.width = 1024;
-        directionalLight.shadow.mapSize.height = 1024;
-        directionalLight.shadow.camera.left = -50;
-        directionalLight.shadow.camera.right = 50;
-        directionalLight.shadow.camera.top = 50;
-        directionalLight.shadow.camera.bottom = -50;
+        // Optymalizacja cieni dla większego obszaru
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.left = -100;
+        sunLight.shadow.camera.right = 100;
+        sunLight.shadow.camera.top = 100;
+        sunLight.shadow.camera.bottom = -100;
+        sunLight.shadow.camera.far = 500;
         
-        this.scene.add(directionalLight);
+        this.scene.add(sunLight);
+    }
+
+    setupUI() {
+        const info = document.createElement('div');
+        info.style.position = 'absolute';
+        info.style.top = '10px';
+        info.style.left = '10px';
+        info.style.color = 'white';
+        info.style.fontFamily = 'sans-serif';
+        info.style.textShadow = '1px 1px 2px black';
+        info.style.pointerEvents = 'none';
+        info.innerHTML = `
+            <b>Minecraft Proto Stage 3</b><br>
+            WSAD: Ruch | SPACE: Skok<br>
+            LPM: Usuń | PPM: Buduj<br>
+            1-4: Wybór bloku (Trawa, Ziemia, Kamień, Drewno)
+        `;
+        this.container.appendChild(info);
+
+        const crosshair = document.createElement('div');
+        crosshair.style.position = 'absolute';
+        crosshair.style.top = '50%';
+        crosshair.style.left = '50%';
+        crosshair.style.width = '20px';
+        crosshair.style.height = '20px';
+        crosshair.style.border = '2px solid white';
+        crosshair.style.borderRadius = '50%';
+        crosshair.style.transform = 'translate(-50%, -50%)';
+        crosshair.style.pointerEvents = 'none';
+        this.container.appendChild(crosshair);
     }
 
     onWindowResize() {

@@ -28,6 +28,23 @@ Zastosowano modularną strukturę, aby odizolować logikę gry od renderowania:
 - Obecnie każdy blok jest osobnym obiektem `THREE.Mesh` z własną geometrią `BoxGeometry`.
 - **Uwaga**: To podejście jest mało wydajne przy większych skalach. W Etapie 2/3 planowane jest przejście na `InstancedMesh` lub scalanie geometrii (Face Culling), aby zredukować liczbę Draw Calls.
 
+### Interakcja i Budowanie (Etap 2)
+- **Raycasting**: Wprowadzono moduł `src/systems/Interaction.js` wykorzystujący `THREE.Raycaster` do wykrywania bloków w zasięgu 5 jednostek od kamery.
+- **System Modyfikacji Świata**:
+  - `LPM`: Usuwanie bloków.
+  - `PPM`: Stawianie nowych bloków na podstawie normalnej ściany.
+- **Highlight**: Półprzezroczysty mesh typu wireframe wskazuje aktualnie celowany blok.
+
+### Zaawansowana Oprawa i System Bloków (Etap 3)
+- **Instanced Rendering**: Przejście z indywidualnych Meshów na `THREE.InstancedMesh` dla każdego typu bloku. Pozwoliło to na znaczną redukcję Draw Calls (z ~1000 do liczby typów bloków).
+- **System Tekstur**: Dodano `TextureLoader.js` generujący proceduralne tekstury szumu (Canvas API) dla Trawy, Ziemi, Kamienia i Drewna. Tekstury są filtrowane metodą `NearestFilter` dla uzyskania "pixel-artowego" wyglądu.
+- **Trwałość Danych**: Zaimplementowano zapis i odczyt stanu świata z `localStorage`. Dane są serializowane do formatu JSON (x, y, z, type).
+- **Ulepszone Wizualia**:
+  - Zastosowano `THREE.FogExp2` dla bardziej naturalnego efektu mgły.
+  - Skonfigurowano `PCFSoftShadowMap` dla miękkich cieni.
+  - Dodano HUD informacyjny oraz celownik (Crosshair) w HTML/CSS.
+- **Zarządzanie Stanem**: `World.js` przechowuje teraz dane w strukturze `Map`, co pozwala na szybki dostęp do informacji o blokach bez polegania na scenie Three.js.
+
 ## 3. Komunikacja między Modułami
 - `Game.js` jest centralnym punktem (Orchestrator). Inicjalizuje świat i gracza, a następnie w pętli `update()` wywołuje ich własne metody aktualizacji stanu.
 - Gracz posiada bezpośredni dostęp do swojej kamery, co pozwala na separację logiki sterowania od reszty systemów.
