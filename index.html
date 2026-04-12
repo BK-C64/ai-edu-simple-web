@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="src/css/base.css">
     <link rel="stylesheet" href="src/css/card.css">
     <link rel="stylesheet" href="src/css/search.css">
+    <link rel="stylesheet" href="src/css/filters.css">
     <link rel="stylesheet" href="src/css/modal.css">
 </head>
 <body>
@@ -25,8 +26,43 @@
         </div>
     </header>
 
+    <section class="filters-container">
+        <div class="container">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>Cena (PLN)</label>
+                    <div class="filter-inputs">
+                        <input type="number" id="filter-price-min" placeholder="Od" class="filter-input">
+                        <span>-</span>
+                        <input type="number" id="filter-price-max" placeholder="Do" class="filter-input">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Rok produkcji</label>
+                    <div class="filter-inputs">
+                        <input type="number" id="filter-year-min" placeholder="Od" class="filter-input">
+                        <span>-</span>
+                        <input type="number" id="filter-year-max" placeholder="Do" class="filter-input">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Rodzaj paliwa</label>
+                    <select id="filter-fuel" class="filter-select">
+                        <option value="">Wszystkie</option>
+                        <option value="Benzyna">Benzyna</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Hybryda">Hybryda</option>
+                        <option value="Elektryczny">Elektryczny</option>
+                    </select>
+                </div>
+                <button id="btn-reset-filters" class="btn-reset">Wyczyść filtry</button>
+            </div>
+        </div>
+    </section>
+
     <main class="main-content">
         <div class="container">
+            <div id="results-count" class="results-count"></div>
             <!-- Miejsce na listę samochodów -->
             <div id="car-list" class="grid-container">
                 <!-- Ładowanie... -->

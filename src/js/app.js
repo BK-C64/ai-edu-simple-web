@@ -1,6 +1,6 @@
 import { getCars } from './api.js';
 import { renderCarList, renderLoading, renderError, renderModal, closeModal } from './ui.js';
-import { state, setCars, setError, setSearchTerm } from './state.js';
+import { state, setCars, setError, setSearchTerm, setFilter, resetFilters } from './state.js';
 
 /**
  * Funkcja pomocnicza do debouncingu.
@@ -20,6 +20,14 @@ const setupEventListeners = (container) => {
   const searchInput = document.getElementById('search-input');
   const modal = document.getElementById('car-modal');
   const modalClose = document.getElementById('modal-close');
+  
+  // Filtry
+  const priceMin = document.getElementById('filter-price-min');
+  const priceMax = document.getElementById('filter-price-max');
+  const yearMin = document.getElementById('filter-year-min');
+  const yearMax = document.getElementById('filter-year-max');
+  const fuelType = document.getElementById('filter-fuel');
+  const btnReset = document.getElementById('btn-reset-filters');
 
   // 1. Wyszukiwanie (z Debouncingiem)
   if (searchInput) {
@@ -29,6 +37,38 @@ const setupEventListeners = (container) => {
     }, 300);
 
     searchInput.addEventListener('input', handleSearch);
+  }
+
+  // 1.2 Filtry (z Debouncingiem dla pól tekstowych)
+  const handleFilterChange = debounce((key, value) => {
+    setFilter(key, value);
+    renderCarList(state.filteredCars, container);
+  }, 300);
+
+  if (priceMin) priceMin.addEventListener('input', (e) => handleFilterChange('priceMin', e.target.value));
+  if (priceMax) priceMax.addEventListener('input', (e) => handleFilterChange('priceMax', e.target.value));
+  if (yearMin) yearMin.addEventListener('input', (e) => handleFilterChange('yearMin', e.target.value));
+  if (yearMax) yearMax.addEventListener('input', (e) => handleFilterChange('yearMax', e.target.value));
+  
+  if (fuelType) {
+    fuelType.addEventListener('change', (e) => {
+      setFilter('fuelType', e.target.value);
+      renderCarList(state.filteredCars, container);
+    });
+  }
+
+  if (btnReset) {
+    btnReset.addEventListener('click', () => {
+      resetFilters();
+      
+      // Generyczne czyszczenie wszystkich pól wejściowych w filtrach i wyszukiwarce
+      const inputs = document.querySelectorAll('.filter-input, .filter-select, .search-input');
+      inputs.forEach(input => {
+        input.value = '';
+      });
+      
+      renderCarList(state.filteredCars, container);
+    });
   }
 
   // 2. Kliknięcie w kartę (Delegacja zdarzeń)

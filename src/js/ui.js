@@ -48,12 +48,28 @@ export const renderCarList = (cars, container) => {
   // Czyścimy kontener przed nowym renderowaniem
   container.innerHTML = '';
   
+  // Renderujemy licznik (szukamy kontenera licznika)
+  const countContainer = document.getElementById('results-count');
+  if (countContainer) {
+    renderResultsCount(cars.length, countContainer);
+  }
+  
   if (cars.length === 0) {
     container.innerHTML = '<p class="no-results">Brak ofert pasujących do wybranych kryteriów.</p>';
     return;
   }
   
   container.innerHTML = cars.map(car => createCarCard(car)).join('');
+};
+
+/**
+ * Renderuje aktualną liczbę wyników.
+ * @param {number} count 
+ * @param {HTMLElement} container 
+ */
+export const renderResultsCount = (count, container) => {
+  if (!container) return;
+  container.innerText = `Znaleziono: ${count} ${count === 1 ? 'ofertę' : count > 1 && count < 5 ? 'oferty' : 'ofert'}`;
 };
 
 /**

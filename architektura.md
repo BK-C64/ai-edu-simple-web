@@ -1,28 +1,25 @@
-# Architektura Projektu: AutoGram (Etap 2)
+# Architektura Projektu: AutoGram (Etap 3)
 
 ## Opis Rozwiązania
-W drugim etapie aplikacja została wzbogacona o interaktywne funkcje wyszukiwania ofert w czasie rzeczywistym oraz widok szczegółowy (modal). Utrzymano modularną strukturę i styl wizualny Instagrama.
+W trzecim etapie aplikacja została wzbogacona o zaawansowane filtrowanie ofert (cena, rok, paliwo) oraz licznik wyników. Wszystkie parametry są synchronizowane z centralnym stanem aplikacji i działają w czasie rzeczywistym.
 
 ## Struktura Plików
-- `index.html`: Rozbudowany o pasek wyszukiwania w nagłówku oraz ukryty kontener dla modala.
+- `index.html`: Dodano sekcję filtrów (`.filters-container`) pod nagłówkiem oraz kontener na licznik wyników (`#results-count`).
 - `src/css/`:
-  - `base.css`: Style bazowe i layout.
-  - `card.css`: Style kart ogłoszeń.
-  - `search.css`: Nowy plik ze stylami dla wyszukiwarki i komunikatu "Brak wyników".
-  - `modal.css`: Nowy plik ze stylami dla modala (overlay, animacje, responsywność).
+  - `filters.css`: Nowy plik ze stylami dla panelu filtrów, wejść numerycznych i przycisku resetu. Stylizacja spójna z "Clean UI".
 - `src/js/`:
-  - `app.js`: Dodano obsługę zdarzeń (`input` dla wyszukiwarki, delegacja zdarzeń `click` dla kart, obsługa zamykania modala).
-  - `state.js`: Dodano pola `searchTerm` oraz logikę filtrowania danych (`applyFilters`).
-  - `ui.js`: Dodano funkcje `renderModal(car)` i `closeModal()`, obsługujące dynamiczne wyświetlanie szczegółów.
+  - `app.js`: Dodano obsługę zdarzeń dla nowych pól filtrów (`input` / `change`) oraz przycisku resetowania filtrów. Zastosowano debouncing dla pól numerycznych.
+  - `state.js`: Rozbudowano obiekt `state` o pod-obiekt `filters`. Zaktualizowano `applyFilters` o logikę łączącą wyszukiwanie tekstowe z filtrami numerycznymi i kategorycznymi (operator AND). Dodano funkcje `setFilter` i `resetFilters`.
+  - `ui.js`: Dodano funkcję `renderResultsCount`, która dynamicznie informuje użytkownika o liczbie znalezionych ofert.
 
 ## Nowe Funkcjonalności i Wzorce
-- **Real-time Search**: Wykorzystanie zdarzenia `input` do natychmiastowego filtrowania listy ofert bez odświeżania strony.
-- **Event Delegation (Delegacja Zdarzeń)**: Zastosowanie jednego listenera na kontenerze listy do obsługi kliknięć we wszystkie (również dynamicznie dodawane) karty samochodów. Optymalizuje to wydajność i upraszcza zarządzanie pamięcią.
-- **State-Driven UI**: Ponowne renderowanie listy wynika bezpośrednio ze zmiany stanu (`state.searchTerm` -> `state.filteredCars`), co zapewnia spójność danych.
-- **Modal Pattern**: Implementacja modala jako nakładki (overlay) z animacjami CSS, blokadą scrolla tła i możliwością zamknięcia na kilka sposobów (przycisk, tło).
+- **Advanced Multi-criteria Filtering**: Implementacja logiki filtrującej, która łączy wiele warunków (cena od/do, rok od/do, typ paliwa, fraza tekstowa).
+- **Synchronized UI State**: Wszystkie pola filtrów są synchronizowane ze stanem. Przycisk "Wyczyść filtry" resetuje zarówno stan, jak i wartości w polach formularza w UI.
+- **Dynamic Result Counting**: Licznik ofert aktualizuje się przy każdej zmianie parametrów wyszukiwania, poprawiając UX poprzez natychmiastową informację zwrotną.
+- **Debouncing**: Zastosowany dla wszystkich pól tekstowych i numerycznych, aby uniknąć nadmiernego renderowania przy szybkim wpisywaniu wartości.
 
 ## Decyzje Projektowe
-1. **Filtrowanie w stanie**: Logika filtrowania została umieszczona w `state.js`, aby oddzielić operacje na danych od warstwy UI.
-2. **Animacje**: Dodano subtelne animacje wejścia dla modala (`modalSlideUp`), aby poprawić UX i nadać aplikacji nowoczesny charakter.
-3. **Responsywność**: Modal automatycznie zmienia układ z dwukolumnowego na jednokolumnowy na urządzeniach mobilnych.
+1. **Koniunkcja Filtrów (AND)**: Zdecydowano, że wszystkie filtry muszą być spełnione jednocześnie, co pozwala na precyzyjne zawężanie wyników.
+2. **Obsługa Wartości Pustych**: Puste pola filtrów (null) są traktowane jako brak ograniczenia, co jest intuicyjne dla użytkownika.
+3. **Sticky Filters**: Panel filtrów został ustawiony jako `sticky`, aby był zawsze dostępny podczas przewijania długiej listy ofert (poprawa użyteczności).
 
