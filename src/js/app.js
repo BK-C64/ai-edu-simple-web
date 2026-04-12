@@ -1,6 +1,6 @@
 import { getCars } from './api.js';
-import { renderCarList, renderLoading, renderError, renderModal, closeModal } from './ui.js';
-import { state, setCars, setError, setSearchTerm, setFilter, resetFilters } from './state.js';
+import { renderCarList, renderLoading, renderError, renderModal, closeModal, renderAddCarForm, showNotification } from './ui.js';
+import { state, setCars, setError, setSearchTerm, setFilter, resetFilters, addCar } from './state.js';
 
 /**
  * Funkcja pomocnicza do debouncingu.
@@ -21,6 +21,12 @@ const setupEventListeners = (container) => {
   const modal = document.getElementById('car-modal');
   const modalClose = document.getElementById('modal-close');
   
+  // Dodawanie ogłoszenia
+  const btnOpenAddCar = document.getElementById('btn-open-add-car');
+  const addModal = document.getElementById('add-car-modal');
+  const addModalClose = document.getElementById('add-modal-close');
+  const addModalBody = document.getElementById('add-modal-body');
+
   // Filtry
   const priceMin = document.getElementById('filter-price-min');
   const priceMax = document.getElementById('filter-price-max');
@@ -81,21 +87,69 @@ const setupEventListeners = (container) => {
     }
   });
 
-  // 3. Zamykanie modala (Przycisk X)
-  if (modalClose) {
-    modalClose.addEventListener('click', closeModal);
-  }
-
-  // 4. Zamykanie modala (Kliknięcie w tło)
-  if (modal) {
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
+  // 3. Dodawanie ogłoszenia - otwarcie modala
+  if (btnOpenAddCar && addModal && addModalBody) {
+    btnOpenAddCar.addEventListener('click', () => {
+      renderAddCarForm(addModalBody);
+      addModal.classList.remove('hidden');
+      setTimeout(() => addModal.classList.add('active'), 10);
+      document.body.style.overflow = 'hidden';
     });
   }
 
-  // 5. Zamykanie modala (Klawisz ESC)
+  // 3.1 Obsługa submit formularza (Delegacja zdarzeń na addModalBody)
+  if (addModalBody) {
+    addModalBody.addEventListener('submit', (e) => {
+      if (e.target.id === 'add-car-form') {
+        e.preventDefault();
+        
+        const form = e.target;
+        const formData = new FormData(form);
+        const newCar = {
+          marka: formData.get('marka'),
+          model: formData.get('model'),
+          cena: formData.get('cena'),
+          rok: formData.get('rok'),
+          przebieg: formData.get('przebieg'),
+          paliwo: formData.get('paliwo'),
+          stan: formData.get('stan'),
+          obrazek: formData.get('obrazek') || 'https://via.placeholder.com/600x400?text=Brak+zdjęcia'
+        };
+
+        // Walidacja dodatkowa
+        if (newCar.cena <= 0 || newCar.rok <= 0) {
+          showNotification('Cena i rok muszą być większe od 0', 'error');
+          return;
+        }
+
+        addCar(newCar);
+        closeModal('add-car-modal');
+        renderCarList(state.filteredCars, container);
+        showNotification('Ogłoszenie zostało dodane pomyślnie!', 'success');
+      }
+    });
+  }
+
+  // 4. Zamykanie modali (Przyciski X)
+  if (modalClose) {
+    modalClose.addEventListener('click', () => closeModal('car-modal'));
+  }
+  if (addModalClose) {
+    addModalClose.addEventListener('click', () => closeModal('add-car-modal'));
+  }
+
+  // 5. Zamykanie modali (Kliknięcie w tło)
+  [modal, addModal].forEach(m => {
+    if (m) {
+      m.addEventListener('click', (e) => {
+        if (e.target === m) closeModal(m.id);
+      });
+    }
+  });
+
+  // 6. Zamykanie modala (Klawisz ESC)
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+    if (e.key === 'Escape') {
       closeModal();
     }
   });

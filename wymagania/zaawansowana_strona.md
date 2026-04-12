@@ -129,18 +129,48 @@ Projekt został zaprojektowany w oparciu o nowoczesne wzorce architektury fronte
 - Wydzielenie stylów filtrów do `src/css/search.css`.
 
 ### Etap 4: Dodawanie Ogłoszenia (Local State)
-**Cel dla użytkownika:** Możliwość wystawienia własnego auta na sprzedaż i natychmiastowe zobaczenie go w serwisie.
-- **Zakres funkcjonalny**:
-    - Formularz dodawania ogłoszenia z walidacją podstawowych pól.
-    - Dodawanie nowego obiektu do globalnej listy ogłoszeń w pamięci aplikacji.
-    - Powiadomienie o pomyślnym dodaniu ogłoszenia.
-- **Wskazówki architektoniczne**:
-    - Obsługa formularza (`FormData` API).
-    - Aktualizacja stanu aplikacji i automatyczne ponowne wywołanie funkcji renderującej listę.
-    - (Opcjonalnie) Zapis stanu w `localStorage`, aby dane przetrwały odświeżenie strony.
-- **Kryteria akceptacji**:
-    - Po wypełnieniu formularza nowe auto pojawia się na początku listy ogłoszeń.
-    - Próba wysłania pustego formularza jest blokowana przez walidację.
+**Cel dla użytkownika:** Możliwość wystawienia własnej oferty sprzedaży samochodu i natychmiastowe zobaczenie jej w serwisie (w ramach bieżącej sesji).
+
+**Historyjki Użytkownika:**
+- Jako użytkownik, chcę kliknąć przycisk "Dodaj ogłoszenie", aby móc wprowadzić dane swojego auta.
+- Jako użytkownik, chcę wypełnić formularz z parametrami auta (marka, cena, rok, przebieg, paliwo, stan), aby oferta była kompletna.
+- Jako użytkownik, chcę otrzymać potwierdzenie po dodaniu ogłoszenia, aby mieć pewność, że proces zakończył się sukcesem.
+
+**Kryteria Akceptacji (AC):**
+1. **Interfejs Wywołania (UI):**
+    - Przycisk "Dodaj ogłoszenie" (np. ikona "+" w nagłówku lub wyraźny przycisk w panelu filtrów) jest stale widoczny dla użytkownika.
+    - Stylistyka przycisku nawiązuje do nowoczesnych aplikacji webowych (Clean UI).
+
+2. **Formularz Dodawania (Modal):**
+    - Po kliknięciu przycisku otwiera się okno modalne (wykorzystujące istniejący mechanizm modali lub dedykowaną funkcję w `ui.js`).
+    - Pola formularza:
+        - **Marka i Model**: pole tekstowe.
+        - **Cena**: pole numeryczne.
+        - **Rok produkcji**: pole numeryczne.
+        - **Przebieg**: pole numeryczne.
+        - **Rodzaj paliwa**: lista rozwijana (Benzyna, Diesel, Hybryda, Elektryczny).
+        - **Stan**: lista rozwijana (Nowy, Używany).
+        - **URL obrazka**: pole tekstowe (opcjonalne; jeśli puste, system przypisuje domyślny placeholder zdjęcia).
+
+3. **Walidacja Danych:**
+    - Wszystkie pola tekstowe i numeryczne (z wyjątkiem URL obrazka) są wymagane.
+    - Cena oraz Rok produkcji muszą być liczbami dodatnimi.
+    - Walidacja odbywa się przed dodaniem ogłoszenia do stanu.
+
+4. **Logika i Przechowywanie:**
+    - Nowe ogłoszenie jest dodawane do centralnego stanu aplikacji (`state.cars`).
+    - Po pomyślnym dodaniu, lista ofert na stronie głównej odświeża się automatycznie, uwzględniając aktualnie nałożone filtry i wyszukiwanie.
+    - **Ważne:** Dane są przechowywane wyłącznie w pamięci operacyjnej (znikają po odświeżeniu strony).
+    - Po zapisaniu danych modal jest zamykany, a pola formularza są czyszczone.
+
+5. **UX i Komunikacja:**
+    - Po dodaniu ogłoszenia wyświetlany jest krótki komunikat o sukcesie (np. alert systemowy lub dedykowany element w UI).
+    - Formularz jest czytelny i zoptymalizowany pod rozdzielczość 1920x1080 (HD) na systemie Windows.
+
+**Wskazówki architektoniczne**:
+- Implementacja obsługi zdarzenia `submit` formularza z użyciem `event.preventDefault()`.
+- Wykorzystanie istniejącej logiki renderowania z `ui.js` do natychmiastowej aktualizacji widoku.
+- Wydzielenie logiki czyszczenia formularza do osobnej funkcji pomocniczej.
 
 ## Instrukcja Uruchomienia
 Ze względu na wykorzystanie modułów JavaScript (ES6 Modules), projekt musi być serwowany przez protokół HTTP.

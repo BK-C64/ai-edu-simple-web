@@ -23,7 +23,7 @@ const createCarCard = (car) => {
         </div>
       </div>
       <div class="card-image-wrapper">
-        <img src="${car.obrazek}" alt="${car.marka} ${car.model}" class="card-image" loading="lazy">
+        <img src="${car.obrazek}" alt="${car.marka} ${car.model}" class="card-image" loading="lazy" onerror="this.onerror=null;this.src='https://via.placeholder.com/600x400?text=Błąd+obrazka';">
       </div>
       <div class="card-content">
         <div class="card-actions">
@@ -130,17 +130,111 @@ export const renderModal = (car) => {
 };
 
 /**
- * Zamyka modal.
+ * Renderuje formularz dodawania samochodu.
+ * @param {HTMLElement} container 
  */
-export const closeModal = () => {
-  const modal = document.getElementById('car-modal');
-  if (!modal) return;
+export const renderAddCarForm = (container) => {
+  if (!container) return;
 
-  modal.classList.remove('active');
+  container.innerHTML = `
+    <form id="add-car-form" class="add-car-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="form-brand">Marka *</label>
+          <input type="text" id="form-brand" name="marka" required placeholder="np. Toyota">
+        </div>
+        <div class="form-group">
+          <label for="form-model">Model *</label>
+          <input type="text" id="form-model" name="model" required placeholder="np. Corolla">
+        </div>
+        <div class="form-group">
+          <label for="form-price">Cena (PLN) *</label>
+          <input type="number" id="form-price" name="cena" required min="1" placeholder="np. 45000">
+        </div>
+        <div class="form-group">
+          <label for="form-year">Rok produkcji *</label>
+          <input type="number" id="form-year" name="rok" required min="1900" max="${new Date().getFullYear()}" placeholder="np. 2020">
+        </div>
+        <div class="form-group">
+          <label for="form-mileage">Przebieg (km) *</label>
+          <input type="number" id="form-mileage" name="przebieg" required min="0" placeholder="np. 120000">
+        </div>
+        <div class="form-group">
+          <label for="form-fuel">Rodzaj paliwa *</label>
+          <select id="form-fuel" name="paliwo" required>
+            <option value="">Wybierz...</option>
+            <option value="Benzyna">Benzyna</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Hybryda">Hybryda</option>
+            <option value="Elektryczny">Elektryczny</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="form-condition">Stan *</label>
+          <select id="form-condition" name="stan" required>
+            <option value="Używany">Używany</option>
+            <option value="Nowy">Nowy</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="form-image">URL obrazka</label>
+          <input type="url" id="form-image" name="obrazek" placeholder="https://images.unsplash.com/...">
+        </div>
+      </div>
+      <div class="form-footer">
+        <p class="form-note">* pola wymagane</p>
+        <button type="submit" class="btn-submit">Dodaj ogłoszenie</button>
+      </div>
+    </form>
+  `;
+};
+
+/**
+ * Wyświetla powiadomienie (toast).
+ * @param {string} message 
+ * @param {string} type 'success' | 'error'
+ */
+export const showNotification = (message, type = 'success') => {
+  const container = document.getElementById('notification-container');
+  if (!container) return;
+
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  notification.innerText = message;
+
+  container.appendChild(notification);
+
+  // Animacja pojawiania się
+  setTimeout(() => notification.classList.add('show'), 10);
+
+  // Usuwanie po 3 sekundach
   setTimeout(() => {
-    modal.classList.add('hidden');
-    document.body.style.overflow = ''; // Przywrócenie scrolla
-  }, 300);
+    notification.classList.remove('show');
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+};
+
+/**
+ * Zamyka konkretny modal lub wszystkie modale.
+ * @param {string} modalId Opcjonalne ID modala
+ */
+export const closeModal = (modalId = null) => {
+  const modals = modalId 
+    ? [document.getElementById(modalId)] 
+    : document.querySelectorAll('.modal-overlay');
+
+  modals.forEach(modal => {
+    if (!modal) return;
+    modal.classList.remove('active');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      // Sprawdzamy czy został jakiś aktywny modal przed przywróceniem scrolla
+      const activeModals = document.querySelectorAll('.modal-overlay.active');
+      if (activeModals.length === 0) {
+        document.body.style.overflow = '';
+      }
+    }, 300);
+  });
 };
 
 /**

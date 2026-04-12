@@ -67,6 +67,26 @@ export const resetFilters = () => {
 };
 
 /**
+ * Dodaje nowy samochód do stanu.
+ * @param {Object} newCar 
+ */
+export const addCar = (newCar) => {
+  // Generowanie unikalnego ID (max ID + 1)
+  const maxId = state.cars.reduce((max, car) => (car.id > max ? car.id : max), 0);
+  const carWithId = {
+    ...newCar,
+    id: maxId + 1,
+    // Konwersja pól numerycznych
+    cena: Number(newCar.cena),
+    rok: Number(newCar.rok),
+    przebieg: Number(newCar.przebieg)
+  };
+
+  state.cars = [carWithId, ...state.cars];
+  applyFilters();
+};
+
+/**
  * Filtruje samochody na podstawie aktualnego stanu.
  */
 const applyFilters = () => {
