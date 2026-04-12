@@ -17,30 +17,32 @@ Stworzenie zaawansowanego Proof of Concept (POC) silnika voxelowego typu Minecra
 - **Wydajność**: Zastosowanie technik optymalizacyjnych (np. instancing lub łączenie geometrii) w celu zapewnienia płynności działania.
 - **Interfejs**: Obsługa Pointer Lock API dla sterowania myszą jak w grach FPS.
 
-## Architektura Projektu (Techniczna)
-Projekt opiera się na profesjonalnej strukturze modułowej (ES6 Modules), zapewniającej skalowalność i łatwość rozbudowy:
+## Architektura Projektu 
+Projekt wykorzystuje modularną strukturę ES6 Modules, dzieląc odpowiedzialności na dedykowane katalogi i pliki:
 
-### 1. Core Engine
-- **Game.js**: Główna pętla gry (RequestAnimationFrame), inicjalizacja i konfiguracja bazowych komponentów Three.js (Scene, Camera, Renderer). Koordynuje przepływ danych między modułami.
-- **Input.js**: Scentralizowana obsługa wejścia (klawiatura, myszka). Implementuje Pointer Lock API oraz mapowanie klawiszy na akcje w grze.
+### 1. Katalog `src/` (Główne pliki)
+- **main.js**: Punkt wejścia aplikacji. Inicjalizuje klasę `Game` i zarządza pętlą animacji oraz zdarzeniami DOM (np. kliknięcie w overlay).
+- **style.css**: Scentralizowany arkusz stylów dla całego interfejsu gry (HUD, Hotbar, Inwentarz, Overlay).
 
-### 2. World Management
-- **World.js**: Zarządzanie danymi o świecie. Przechowuje stan wszystkich bloków (Voxel Data) i zarządza cyklem życia Chunków.
-- **Chunk.js**: Logika generowania pojedynczego fragmentu świata (np. 16x16x16). Odpowiada za wydajny "meshing" – generowanie geometrii Three.js z zastosowaniem optymalizacji ścianek (Face Culling).
-- **TerrainGenerator.js**: Silnik generowania proceduralnego wykorzystujący algorytmy szumu (np. Perlin/Simplex Noise) do tworzenia naturalnych formacji terenu.
+### 2. Katalog `src/core/` (Silnik)
+- **Game.js**: Serce aplikacji. Zarządza sceną Three.js, rendererem, oświetleniem oraz koordynuje pracę gracza, świata i systemów interakcji/UI.
 
-### 3. Entities & Player
-- **Player.js**: Implementacja fizyki pierwszej osoby. Obsługuje poruszanie się, skakanie, grawitację oraz detekcję kolizji z geometrią świata (AABB).
-- **Interaction.js**: Wykorzystuje Raycasting do precyzyjnego wykrywania bloków, na które patrzy gracz, umożliwiając ich niszczenie i stawianie.
+### 3. Katalog `src/world/` (Świat)
+- **World.js**: Zarządza danymi bloków (Map) i ich wizualną reprezentacją (`InstancedMesh`). Odpowiada za generowanie, dodawanie, usuwanie oraz trwałość danych (LocalStorage).
 
-### 4. UI & Systems
-- **UI.js**: Warstwa interfejsu użytkownika zbudowana w HTML/CSS. Obsługuje HUD (celownik), pasek szybkiego wyboru (Hotbar), ekrany menu i inwentarz.
-- **TextureLoader.js**: Zarządzanie zasobami graficznymi. Ładowanie atlasów tekstur, mapowanie UV dla bloków oraz konfiguracja materiałów Three.js.
+### 4. Katalog `src/entities/` (Podmioty)
+- **Player.js**: Kontroluje postać gracza (kamera FPP), implementuje fizykę (grawitacja, skok) oraz zaawansowaną detekcję kolizji z podłożem.
 
-### Kluczowe Zasady Projektowe:
-- **Separation of Concerns**: Wyraźne oddzielenie logiki renderowania (Three.js) od logicznej reprezentacji danych świata (Voxel Array).
-- **Performance First**: Minimalizacja liczby obiektów w scenie i wywołań Draw Calls poprzez optymalny meshing (BufferGeometry) i Face Culling (renderowanie tylko widocznych ścianek).
-- **Single Source of Truth**: Centralny stan świata w `World.js` jest jedynym źródłem prawdy, z którym synchronizowana jest warstwa wizualna.
+### 5. Katalog `src/systems/` (Systemy pomocnicze)
+- **Interaction.js**: Realizuje mechanikę Raycastingu, niszczenia (LPM) i budowania (PPM) bloków, dbając o to, by nie budować "wewnątrz" gracza.
+- **UI.js**: Zarządza interfejsem użytkownika (Hotbar, Inwentarz), obsługuje wybór bloków (klawisze, rolka myszy) oraz stany widoczności elementów GUI.
+- **TextureLoader.js**: Generuje proceduralne tekstury bloków przy użyciu Canvas API, zapewniając unikalny wygląd bez zewnętrznych plików graficznych.
+
+### Kluczowe Zasady Implementacji:
+- **Instanced Rendering**: Wykorzystanie `THREE.InstancedMesh` w `World.js` dla optymalizacji wydajności (jeden Draw Call na typ bloku).
+- **Separacja CSS**: Całkowite oddzielenie logiki JavaScript od stylizacji (brak stylów inline, użycie `classList`).
+- **Data Persistence**: Automatyczny zapis i odczyt stanu świata z `LocalStorage`.
+- **Event-Driven UI**: Komunikacja między UI a graczem/interakcją za pomocą niestandardowych zdarzeń (np. `inventoryToggled`).
 
 ## Etapy Realizacji (Przyrosty)
 
